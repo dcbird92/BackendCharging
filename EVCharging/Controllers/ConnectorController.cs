@@ -96,6 +96,10 @@ public class ConnectorController(ConnectorService connectorService) : Controller
 
             return NoContent();
         }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
         catch(InvalidOperationException ex)
         {
             return BadRequest(ex.Message);

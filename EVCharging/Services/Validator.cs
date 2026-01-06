@@ -48,7 +48,7 @@ public class EvValidator
             .FirstOrDefaultAsync(g => g.Id == groupId);
 
         if (group is null)
-            throw new InvalidOperationException("Group not found");
+            throw new KeyNotFoundException("Group not found");
 
         if (group.CapacityAmps <= 0)
             throw new InvalidOperationException("Group capacity must be greater then 0");

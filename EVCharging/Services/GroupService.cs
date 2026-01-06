@@ -58,7 +58,7 @@ public class GroupService(EvChargingDbContext db, EvValidator validator)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
         if (existingGroup is null)
-            throw new InvalidOperationException("Group was not found");
+            throw new KeyNotFoundException("Group was not found");
 
         existingGroup.Name = dto.Name;
         existingGroup.CapacityAmps = dto.CapacityAmps;

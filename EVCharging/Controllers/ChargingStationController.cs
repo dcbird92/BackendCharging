@@ -57,6 +57,10 @@ public class ChargingStationController(ChargingStationService stationService) : 
             var updated = await _stationService.UpdateAsync(id, request);
             return Ok(updated);
         }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
         catch(InvalidOperationException ex)
         {
             return BadRequest(ex.Message);
