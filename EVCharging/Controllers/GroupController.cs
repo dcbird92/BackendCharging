@@ -56,6 +56,10 @@ public class GroupController(GroupService groupService) : ControllerBase
             var updated = await _groupService.UpdateAsync(id, request);
             return Ok(updated);
         }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
         catch (InvalidOperationException ex)
         {
             return BadRequest(ex.Message);

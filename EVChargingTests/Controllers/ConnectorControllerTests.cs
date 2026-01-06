@@ -95,4 +95,56 @@ public class ConnectorControllerTests : IClassFixture<WebAppFactory>
 
         Assert.Equal(HttpStatusCode.BadRequest, delete.StatusCode);
     }
+
+    [Fact]
+    public async Task PUT_connectors_WithMissingConnector_ShouldReturnNotFound()
+    {
+        var group = await Helper.CreateGroup(_client);
+        var station = await Helper.CreateStation(_client, group.Id);
+
+        var update = new ConnectorRequest
+        {
+            Id = 99,
+            MaxCurrentAmps = 20,
+            ChargingStationId = station.Id
+        };
+
+        var response = await _client.PutAsJsonAsync(
+            $"/stations/{station.Id}/connectors/99", update);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_connectors_WithMissingStation_ShouldReturnNotFound()
+    {
+        var missingStationId = Guid.NewGuid();
+
+        var response = await _client.PutAsJsonAsync(
+            $"/stations/{missingStationId}/connectors/1",
+            new ConnectorRequest { Id = 1, MaxCurrentAmps = 10, ChargingStationId = missingStationId });
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_connectors_WithMissingConnector_ShouldReturnNotFound()
+    {
+        var group = await Helper.CreateGroup(_client);
+        var station = await Helper.CreateStation(_client, group.Id);
+
+        var response = await _client.DeleteAsync($"/stations/{station.Id}/connectors/99");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_connectors_WithMissingStation_ShouldReturnNotFound()
+    {
+        var missingStationId = Guid.NewGuid();
+
+        var response = await _client.DeleteAsync($"/stations/{missingStationId}/connectors/1");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }

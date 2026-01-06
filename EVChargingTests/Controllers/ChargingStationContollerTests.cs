@@ -77,4 +77,33 @@ public class ChargingStationContollerTests : IClassFixture<WebAppFactory>
         var get = await _client.GetAsync($"/stations/{station.Id}");
         Assert.Equal(HttpStatusCode.NotFound, get.StatusCode);
     }
+
+    [Fact]
+    public async Task PUT_stations_WithMissingStation_ShouldReturnNotFound()
+    {
+        var missingId = Guid.NewGuid();
+
+        var response = await _client.PutAsJsonAsync($"/stations/{missingId}",
+            new ChargingStationRequest
+            {
+                Name = "Missing",
+                GroupId = Guid.NewGuid(),
+                Connectors = new List<CreateConnectorRequest>
+                {
+                    new CreateConnectorRequest{ Id = 1, MaxCurrentAmps = 10 }
+                }
+            });
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_stations_WithMissingStation_ShouldReturnNotFound()
+    {
+        var missingId = Guid.NewGuid();
+
+        var response = await _client.DeleteAsync($"/stations/{missingId}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }
