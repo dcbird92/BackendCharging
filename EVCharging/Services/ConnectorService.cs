@@ -21,6 +21,13 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
         return connectors.Select(MapToResponse);
     }
 
+    public async Task<IEnumerable<ConnectorResponse>> GetByStationAsync(Guid stationId)
+    {
+        var station = await GetStationWithConnectorsAsync(stationId);
+
+        return station.Connectors.Select(MapToResponse);
+    }
+
     public async Task<ConnectorResponse?> GetAsync(Guid stationId, int connectorId)
     {
         var connector = await _db.Connectors
@@ -31,12 +38,7 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
 
     public async Task<ConnectorResponse> CreateAsync(ConnectorRequest request)
     {
-        var station = await _db.ChargingStations
-            .Include(s => s.Connectors)
-            .FirstOrDefaultAsync(s => s.Id == request.ChargingStationId);
-
-        if(station is null)
-            throw new KeyNotFoundException("Charging station not found.");
+        var station = await GetStationWithConnectorsAsync(request.ChargingStationId);
 
         if (station.Connectors.Any(c => c.Id == request.Id))
             throw new InvalidOperationException("Connector with the same ID already exists in this station.");
@@ -61,12 +63,7 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
 
     public async Task<ConnectorResponse> UpdateAsync(Guid stationId, int connectorId, ConnectorRequest request)
     {
-        var station = await _db.ChargingStations
-            .Include(s => s.Connectors)
-            .FirstOrDefaultAsync(s => s.Id == stationId);
-
-        if (station is null)
-            throw new KeyNotFoundException("Charging station not found.");
+        var station = await GetStationWithConnectorsAsync(stationId);
 
         var connector = station.Connectors.FirstOrDefault(c => c.Id == connectorId);
 
@@ -86,18 +83,12 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
 
     public async Task<bool> DeleteAsync(Guid stationId, int connectorId)
     {
-        var station = await _db.ChargingStations
-            .Include(s => s.Connectors)
-            .FirstOrDefaultAsync(s => s.Id == stationId);
-
-        if (station is null)
-            throw new KeyNotFoundException("Charging station not found");
+        var station = await GetStationWithConnectorsAsync(stationId);
 
         if (station.Connectors.Count <= 1)
             throw new InvalidOperationException("A station must have atleast one connector");
             
-        var connector = await _db.Connectors
-            .FirstOrDefaultAsync(c => c.ChargingStationId == stationId && c.Id == connectorId);
+        var connector = station.Connectors.FirstOrDefault(c => c.Id == connectorId);
 
         if (connector is null)
             return false;
@@ -115,5 +106,17 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
             MaxCurrentAmps = connector.MaxCurrentAmps,
             ChargingStationId = connector.ChargingStationId
         };
+    }
+
+    private async Task<ChargingStation> GetStationWithConnectorsAsync(Guid stationId)
+    {
+        var station = await _db.ChargingStations
+            .Include(s => s.Connectors)
+            .FirstOrDefaultAsync(s => s.Id == stationId);
+
+        if (station is null)
+            throw new KeyNotFoundException("Charging station not found.");
+
+        return station;
     }
 }
