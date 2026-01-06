@@ -20,8 +20,15 @@ public class ConnectorController(ConnectorService connectorService) : Controller
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ConnectorResponse>>> GetAll(Guid stationId)
     {
-        var connectors = await _connectorService.GetAllAsync();
-        return Ok(connectors.Where(c => c.ChargingStationId == stationId));
+        try
+        {
+            var connectors = await _connectorService.GetByStationAsync(stationId);
+            return Ok(connectors);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     // GET by Id action
@@ -92,6 +99,10 @@ public class ConnectorController(ConnectorService connectorService) : Controller
         catch(InvalidOperationException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
 
     }
