@@ -54,7 +54,7 @@ public class ChargingStationService(EvChargingDbContext db, EvValidator validato
 
         _db.ChargingStations.Add(station);
 
-        await _validator.ValidateGroupCapacityAsync(request.GroupId);
+        await _validator.ValidateGroupCapacityAsync(request.GroupId, station.Connectors, station.Id);
 
         await _db.SaveChangesAsync();
 
@@ -70,6 +70,9 @@ public class ChargingStationService(EvChargingDbContext db, EvValidator validato
         if(station is null) 
             throw new KeyNotFoundException("Charging station not found.");
 
+        if (request.GroupId != station.GroupId)
+            throw new InvalidOperationException("Charging station cannot be moved to a different group");
+
         station.Name = request.Name;
         station.Connectors.Clear();
         station.Connectors = request.Connectors.Select(c => new Connector
@@ -81,7 +84,7 @@ public class ChargingStationService(EvChargingDbContext db, EvValidator validato
 
         _validator.ValidateStation(station);
 
-        await _validator.ValidateGroupCapacityAsync(request.GroupId);
+        await _validator.ValidateGroupCapacityAsync(request.GroupId, station.Connectors, station.Id);
 
         await _db.SaveChangesAsync();
 

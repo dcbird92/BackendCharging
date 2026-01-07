@@ -43,6 +43,9 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
         if (station.Connectors.Any(c => c.Id == request.Id))
             throw new InvalidOperationException("Connector with the same ID already exists in this station.");
 
+        if (station.Connectors.Count >= 5)
+            throw new InvalidOperationException("Station must have between 1-5 connectors");
+
         var connector = new Connector
         {
             Id = request.Id,
@@ -54,7 +57,9 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
 
         station.Connectors.Add(connector);
 
-        await _validator.ValidateGroupCapacityAsync(station.GroupId);
+        _validator.ValidateStation(station);
+
+        await _validator.ValidateGroupCapacityAsync(station.GroupId, station.Connectors, station.Id);
 
         await _db.SaveChangesAsync();
 
@@ -74,7 +79,7 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
 
         _validator.ValidateConnector(connector);
 
-        await _validator.ValidateGroupCapacityAsync(station.GroupId);
+        await _validator.ValidateGroupCapacityAsync(station.GroupId, station.Connectors, station.Id);
 
         await _db.SaveChangesAsync();
 

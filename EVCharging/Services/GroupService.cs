@@ -32,16 +32,15 @@ public class GroupService(EvChargingDbContext db, EvValidator validator)
         return MapToResponse(group);
     }
 
-    public async Task<GroupResponse> CreateAsync(GroupRequest dto)
+    public async Task<GroupResponse> CreateAsync(GroupRequest request)
     {
-        if(dto.CapacityAmps <= 0)
-            throw new InvalidOperationException("Capacity must be greater than zero");
-
         var group = new Group
         {
-            Name = dto.Name,
-            CapacityAmps = dto.CapacityAmps
+            Name = request.Name,
+            CapacityAmps = request.CapacityAmps
         };
+
+        _validator.ValidateGroup(group);
 
         _db.Groups.Add(group);
         await _db.SaveChangesAsync();
@@ -49,7 +48,7 @@ public class GroupService(EvChargingDbContext db, EvValidator validator)
         return MapToResponse(group);
     }
 
-    public async Task<GroupResponse> UpdateAsync(Guid id, GroupRequest dto)
+    public async Task<GroupResponse> UpdateAsync(Guid id, GroupRequest request)
     {
 
         var existingGroup = await _db.Groups
@@ -60,10 +59,11 @@ public class GroupService(EvChargingDbContext db, EvValidator validator)
         if (existingGroup is null)
             throw new KeyNotFoundException("Group was not found");
 
-        existingGroup.Name = dto.Name;
-        existingGroup.CapacityAmps = dto.CapacityAmps;
+        existingGroup.Name = request.Name;
+        existingGroup.CapacityAmps = request.CapacityAmps;
 
-        await _validator.ValidateGroupCapacityAsync(existingGroup.Id);
+        _validator.ValidateGroup(existingGroup);
+        _validator.ValidateGroupCapacity(existingGroup);
 
         await _db.SaveChangesAsync();
 
