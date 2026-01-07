@@ -63,11 +63,11 @@ public class ChargingStationService(EvChargingDbContext db, EvValidator validato
 
     public async Task<ChargingStationResponse> UpdateAsync(Guid id, ChargingStationRequest request)
     {
-        var station = await _db.ChargingStations.
-            Include(cs => cs.Connectors)
+        var station = await _db.ChargingStations
+            .Include(cs => cs.Connectors)
             .FirstOrDefaultAsync(cs => cs.Id == id);
 
-        if(station is null) 
+        if (station is null) 
             throw new KeyNotFoundException("Charging station not found.");
 
         if (request.GroupId != station.GroupId)

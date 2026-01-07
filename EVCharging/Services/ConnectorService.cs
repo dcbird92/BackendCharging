@@ -17,7 +17,7 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
 
     public async Task<IEnumerable<ConnectorResponse>> GetAllAsync()
     {
-        var connectors =  await _db.Connectors.ToListAsync();
+        var connectors = await _db.Connectors.ToListAsync();
         return connectors.Select(MapToResponse);
     }
 
@@ -43,7 +43,7 @@ public class ConnectorService(EvChargingDbContext db, EvValidator validator)
         if (station.Connectors.Any(c => c.Id == request.Id))
             throw new InvalidOperationException("Connector with the same ID already exists in this station.");
 
-        if (station.Connectors.Count >= 5)
+        if (station.Connectors.Count >= EvValidator.MaxConnectorsPerStation)
             throw new InvalidOperationException("Station must have between 1-5 connectors");
 
         var connector = new Connector
