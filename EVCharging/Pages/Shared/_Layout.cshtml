@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EV Charging</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark">EV</span>
+                <div>
+                    <p class="brand-title">ChargeOps</p>
+                    <p class="brand-subtitle">Control Center</p>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link active" href="#">Dashboard</a>
+                <a class="nav-link" href="#">Stations</a>
+                <a class="nav-link" href="#">Connectors</a>
+                <a class="nav-link" href="#">Sessions</a>
+                <a class="nav-link" href="#">Reports</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p class="footer-label">Signed in as</p>
+                <p class="footer-user">Operations Team</p>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <h1 class="topbar-title">Dashboard</h1>
+                    <p class="topbar-subtitle">Live overview of charging activity</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn btn-outline" type="button">Filter</button>
+                    <button class="btn btn-primary" type="button">Create Alert</button>
+                </div>
+            </header>
+            <div class="page-body">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+</body>
+</html>

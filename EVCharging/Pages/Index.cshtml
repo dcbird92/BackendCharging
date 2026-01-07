@@ -1,0 +1,89 @@
+@page
+@model EVCharging.Pages.IndexModel
+@{
+    ViewData["Title"] = "EV Charging Dashboard";
+}
+
+<section class="hero">
+    <div>
+        <p class="eyebrow">Operations Overview</p>
+        <h1>EV Charging Dashboard</h1>
+        <p class="subhead">
+            Track station health, connector utilization, and recent activity from a single view.
+        </p>
+    </div>
+    <div class="hero-actions">
+        <button class="btn btn-primary" type="button">Add Station</button>
+        <button class="btn btn-outline" type="button">Export Report</button>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <p class="stat-label">Active Stations</p>
+        <p class="stat-value">12</p>
+        <p class="stat-footnote">+2 since last week</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-label">Available Connectors</p>
+        <p class="stat-value">48</p>
+        <p class="stat-footnote">92% uptime</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-label">Sessions Today</p>
+        <p class="stat-value">138</p>
+        <p class="stat-footnote">Peak hour: 4–5 PM</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-label">Alerts</p>
+        <p class="stat-value">3</p>
+        <p class="stat-footnote">2 require attention</p>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="panel">
+        <header>
+            <h2>Recent Sessions</h2>
+            <span class="pill">Live</span>
+        </header>
+        <ul class="list">
+            <li>
+                <span class="list-title">Station 7 · Connector 2</span>
+                <span class="list-meta">23 min · 14.2 kWh</span>
+            </li>
+            <li>
+                <span class="list-title">Station 3 · Connector 1</span>
+                <span class="list-meta">48 min · 31.9 kWh</span>
+            </li>
+            <li>
+                <span class="list-title">Station 11 · Connector 4</span>
+                <span class="list-meta">12 min · 6.4 kWh</span>
+            </li>
+        </ul>
+    </article>
+    <article class="panel">
+        <header>
+            <h2>Station Health</h2>
+            <span class="pill pill-muted">Updated 2m ago</span>
+        </header>
+        <div class="health">
+            <div>
+                <p class="health-label">Operational</p>
+                <p class="health-value">10</p>
+            </div>
+            <div>
+                <p class="health-label">Degraded</p>
+                <p class="health-value">1</p>
+            </div>
+            <div>
+                <p class="health-label">Offline</p>
+                <p class="health-value">1</p>
+            </div>
+        </div>
+        <div class="health-actions">
+            <button class="btn btn-outline" type="button">View Details</button>
+            <button class="btn btn-primary" type="button">Resolve Alerts</button>
+        </div>
+    </article>
+</section>
