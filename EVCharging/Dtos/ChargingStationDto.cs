@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 namespace EVCharging.Dtos;
 
 /// <summary>
@@ -6,8 +9,16 @@ namespace EVCharging.Dtos;
 /// </summary>
 public class CreateChargingStationRequest
 {
+    [Required]
+    [MinLength(1, ErrorMessage = "Station name is required")]
     public required string Name { get; set; }
+
+    [Required(ErrorMessage = "GroupId is required")]
     public required Guid GroupId { get; set; }
+
+    [Required]
+    [MinLength(1, ErrorMessage = "At least one connector is required")]
+    [MaxLength(5, ErrorMessage = "A maximum of five connectors are allowed")]
     public required List<CreateConnectorRequest> Connectors { get; set; }
 }
 
@@ -17,8 +28,16 @@ public class CreateChargingStationRequest
 /// </summary>
 public class ChargingStationRequest
 {
+    [Required]
+    [MinLength(1, ErrorMessage = "Station name is required")]
     public required string Name { get; set; }
+
+    [Required(ErrorMessage = "GroupId is required")]
     public required Guid GroupId { get; set; }
+
+    [Required]
+    [MinLength(1, ErrorMessage = "At least one connector is required")]
+    [MaxLength(5, ErrorMessage = "A maximum of five connectors are allowed")]
     public required List<ConnectorRequest> Connectors { get; set; }
 }
 

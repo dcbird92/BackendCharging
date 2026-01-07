@@ -1,4 +1,6 @@
-﻿namespace EVCharging.Dtos;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EVCharging.Dtos;
 
 /// <summary>
 /// Input DTO for creating a connector.
@@ -6,7 +8,10 @@
 /// </summary>
 public class CreateConnectorRequest
 {
+    [Range(1, 5, ErrorMessage = "Connector ID must be between 1-5")]
     public required int Id { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "MaxCurrentAmps must be greater than 0")]
     public required int MaxCurrentAmps { get; set; }
 }
 
@@ -16,7 +21,10 @@ public class CreateConnectorRequest
 /// </summary>
 public class ConnectorRequest
 {
+    [Range(1, 5, ErrorMessage = "Connector ID must be between 1 and 5.")]
     public required int Id { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "Max current amps must be greater than 0.")]
     public required int MaxCurrentAmps { get; set; }
     public required Guid ChargingStationId { get; set; }
 }

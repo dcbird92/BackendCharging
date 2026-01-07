@@ -21,7 +21,7 @@ public class ChargingStationController(ChargingStationService stationService) : 
 
     // GET all action
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ChargingStation>>> GetAll()
+    public async Task<ActionResult<IEnumerable<ChargingStationResponse>>> GetAll()
     {
         var stations = await _stationService.GetAllAsync();
         return Ok(stations);
@@ -29,7 +29,7 @@ public class ChargingStationController(ChargingStationService stationService) : 
 
     // GET by Id action
     [HttpGet("{id}")]
-    public async Task<ActionResult<ChargingStation>> Get(Guid id)
+    public async Task<ActionResult<ChargingStationResponse>> Get(Guid id)
     {
         var station = await _stationService.GetAsync(id);
         return station is not null ? Ok(station) : NotFound();

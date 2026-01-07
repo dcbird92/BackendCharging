@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace EVCharging.Dtos;
 
 /// <summary>
@@ -6,7 +8,11 @@ namespace EVCharging.Dtos;
 /// </summary>
 public class GroupRequest
 {
+    [Required]
+    [MinLength(1, ErrorMessage = "Group name is required")]
     public required string Name { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "CapacityAmps must be greater than 0")]
     public required int CapacityAmps { get; set; }
 }
 
