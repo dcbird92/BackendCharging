@@ -1,13 +1,4 @@
-# GreenFlux Smart Charging Assignment
-**v25**
-
-This was assignment was created, coded, and tested by Sean Hammond.
-For GreenFlux.
-Hopefully everything has been implemented and covered.
-If there are any issues, Merel or Sotiris, please let me know at seanhammond801@gmail.com.
-
-This project implements the Smart Charging system described in the assignment.
-It provides a REST API for managing:
+This provides a REST API for managing:
 
 - **Groups**
 - **Charging Stations**
@@ -19,7 +10,7 @@ The solution also includes a complete **integration and unit test project**.
 
 ---
 
-## 📦 Technologies Used
+## Technologies Used
 - .NET 10 (or .NET 8 depending on local SDK)
 - ASP.NET Core Web API
 - Entity Framework Core (InMemory)
@@ -28,7 +19,7 @@ The solution also includes a complete **integration and unit test project**.
 
 ---
 
-# ▶️ How to Build and Run
+# Build and Run
 
 Make sure you are located in the EVChargingRepo and can see the .sln for the project.
 Then run these...

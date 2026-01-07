@@ -89,4 +89,25 @@ public class GroupControllerTests : IClassFixture<WebAppFactory>
         var get = await _client.GetAsync($"/api/groups/{created.Id}");
         Assert.Equal(HttpStatusCode.NotFound, get.StatusCode);
     }
+
+    [Fact]
+    public async Task PUT_groups_id_WithMissingGroup_ShouldReturnNotFound()
+    {
+        var missingId = Guid.NewGuid();
+
+        var response = await _client.PutAsJsonAsync($"/groups/{missingId}",
+            new GroupRequest { Name = "Missing", CapacityAmps = 10 });
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_groups_id_WithMissingGroup_ShouldReturnNotFound()
+    {
+        var missingId = Guid.NewGuid();
+
+        var response = await _client.DeleteAsync($"/groups/{missingId}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }
