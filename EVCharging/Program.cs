@@ -21,6 +21,9 @@ builder.Services.AddControllers(options =>
         options.Filters.Add<ApiExceptionFilter>();
 });
 
+// Registers Razor Pages services so the app can serve server-rendered UI pages.
+builder.Services.AddRazorPages();
+
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -71,8 +74,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Enables serving static assets (CSS, JS, images) needed by Razor Pages.
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
 app.MapControllers();
+// Maps Razor Pages endpoints into the request pipeline.
+app.MapRazorPages();
 
 app.Run();
