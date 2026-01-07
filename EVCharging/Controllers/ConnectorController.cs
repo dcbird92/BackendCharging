@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using EVCharging.Dtos;
 using EVCharging.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,8 @@ namespace EVCharging.Controllers;
 /// and maintains a consistent API surface.
 /// </summary>
 [ApiController]
-[Route("stations/{stationId}/connectors")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}stations/{stationId}/connectors")]
 public class ConnectorController(ConnectorService connectorService) : ControllerBase
 {
     private readonly ConnectorService _connectorService = connectorService;
@@ -36,63 +38,33 @@ public class ConnectorController(ConnectorService connectorService) : Controller
     [HttpPost]
     public async Task<ActionResult<ConnectorResponse>> Create(Guid stationId, ConnectorRequest request)
     {
-        try
-        {
-            request.ChargingStationId = stationId;
+        request.ChargingStationId = stationId;
 
-            var created = await _connectorService.CreateAsync(request);
+        var created = await _connectorService.CreateAsync(request);
 
-            return CreatedAtAction(nameof(Get),
-                new { stationId = stationId, connectorId = created.Id },
-                created);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return CreatedAtAction(nameof(Get),
+            new { version = HttpContext.GetRequestedApiVersion()?.ToString(), stationId, connectorId = created.Id },
+            created);
     }
 
     // PUT action
     [HttpPut("{connectorId:int}")]
     public async Task<ActionResult<ConnectorResponse>> Update(Guid stationId, int connectorId, ConnectorRequest request)
     {
-        try
-        {
-            request.ChargingStationId = stationId;
+        request.ChargingStationId = stationId;
 
-            var updated = await _connectorService.UpdateAsync(stationId, connectorId, request);
-            return Ok(updated);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var updated = await _connectorService.UpdateAsync(stationId, connectorId, request);
+        return Ok(updated);
     }
 
     // DELETE action
     [HttpDelete("{connectorId:int}")]
     public async Task<IActionResult> Delete(Guid stationId, int connectorId)
     {
-        try
-        {
-            var deleted = await _connectorService.DeleteAsync(stationId, connectorId);
-            if (!deleted)
-                return NotFound();
+        var deleted = await _connectorService.DeleteAsync(stationId, connectorId);
+        if (!deleted)
+            return NotFound();
 
-            return NoContent();
-        }
-        catch(InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
+        return NoContent();
     }
 }

@@ -1,4 +1,8 @@
 using EVCharging.Data;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using EVCharging.Filters;
+using EVCharging.Options;
 using EVCharging.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,12 +16,29 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+        options.Filters.Add<ApiExceptionFilter>();
+});
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 // DbContext - InMemory
 builder.Services.AddDbContext<EvChargingDbContext>(opt =>
@@ -37,7 +58,15 @@ if (app.Environment.IsDevelopment())
 {
     //app.MapOpenApi();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+    app.UseSwaggerUI(options =>
+    {
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                $"EV Charging API {description.ApiVersion}");
+        }
+    });
 }
 
 app.UseHttpsRedirection();

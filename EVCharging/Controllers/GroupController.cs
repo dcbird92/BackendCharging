@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using EVCharging.Dtos;
 using EVCharging.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,8 @@ namespace EVCharging.Controllers;
 /// to ensure a stable and consistent API contract.
 /// </summary>
 [ApiController]
-[Route("groups")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/groups")]
 public class GroupController(GroupService groupService) : ControllerBase
 {
     private readonly GroupService _groupService = groupService;
@@ -36,30 +38,18 @@ public class GroupController(GroupService groupService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<GroupResponse>> Create(GroupRequest request)
     {
-        try
-        {
-            var newGroup = await _groupService.CreateAsync(request);
-            return CreatedAtAction(nameof(Get), new { id = newGroup.Id }, newGroup);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var newGroup = await _groupService.CreateAsync(request);
+        return CreatedAtAction(nameof(Get),
+            new { version = HttpContext.GetRequestedApiVersion()?.ToString(), id = newGroup.Id },
+            newGroup);
     }
 
     // PUT action
     [HttpPut("{id}")]
     public async Task<ActionResult<GroupResponse>> Update(Guid id, GroupRequest request)
     {
-        try
-        {
-            var updated = await _groupService.UpdateAsync(id, request);
-            return Ok(updated);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var updated = await _groupService.UpdateAsync(id, request);
+        return Ok(updated);
     }
 
     // DELETE action

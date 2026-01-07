@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using EVCharging.Dtos;
 using EVCharging.Models;
 using EVCharging.Services;
@@ -12,7 +13,8 @@ namespace EVCharging.Controllers;
 /// to ensure a stable and consistent API contract.
 /// </summary>
 [ApiController]
-[Route("stations")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/stations")]
 public class ChargingStationController(ChargingStationService stationService) : ControllerBase
 {
     private readonly ChargingStationService _stationService = stationService;
@@ -37,30 +39,18 @@ public class ChargingStationController(ChargingStationService stationService) : 
     [HttpPost]
     public async Task<ActionResult<ChargingStationResponse>> Create(CreateChargingStationRequest request)
     {
-        try
-        {
-            var newStation = await _stationService.CreateAsync(request);
-            return CreatedAtAction(nameof(Get), new { id = newStation.Id }, newStation);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var newStation = await _stationService.CreateAsync(request);
+        return CreatedAtAction(nameof(Get),
+            new { version = HttpContext.GetRequestedApiVersion()?.ToString(), id = newStation.Id },
+            newStation);
     }
 
     // PUT action
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(Guid id, ChargingStationRequest request)
     {
-        try
-        {
-            var updated = await _stationService.UpdateAsync(id, request);
-            return Ok(updated);
-        }
-        catch(InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var updated = await _stationService.UpdateAsync(id, request);
+        return Ok(updated);
     }
 
     // DELETE action
